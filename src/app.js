@@ -35,11 +35,11 @@ const getCompletedTasks = () => {
 getCompletedTasks();
 
 setTimeout(() => {
-
     express()
-        .get('/', (req, res) => {
-            res.send('<pre>' + JSON.stringify(completed, null, 2) + '</pre>');
-        })
+        .get('/', (req, res) => res.render('index', { completed }))
+        .set('view engine', 'ect')
+        .set('views', __dirname + '/../views')
+        .engine('ect', ect({ watch: true }).render)
         .listen(port, () => console.info('Website started at port ' + port));
 
 }, 3000);

@@ -3,12 +3,12 @@ const express = require('express');
 const ect = require('ect');
 const WunderlistSDK = require('wunderlist');
 
-const port = 5000;
-
 const wunderlist = new WunderlistSDK({
     'accessToken': config.get('wunderlist.accessToken'),
     'clientID': config.get('wunderlist.clientId')
 });
+
+const port = config.get('port');
 
 const midnight = new Date();
 midnight.setHours(0, 0, 0, 0);
@@ -21,6 +21,17 @@ const getCompletedTasks = () => {
             wunderlist.http.tasks.forList(list.id, true).done(tasks => {
                 tasks.forEach(task => {
                     if (new Date(task.completed_at).getTime() > midnight.getTime()) {
+                        wunderlist.http.subtasks.forTask(task.id, true).done(subtasks => {
+                        subtasks.forEach(subtask => {
+                            if (new Date(subtask.completed_at).getTime() > midnight.getTime()) {
+                                completed.push({
+                                    list: list.title,
+                                    task: task.title,
+                                    subtask: subtask.title
+                                });
+                            }
+                        });
+                    });
                         completed.push({
                             list: list.title,
                             task: task.title
@@ -42,4 +53,4 @@ setTimeout(() => {
         .engine('ect', ect({ watch: true }).render)
         .listen(port, () => console.info('Website started at port ' + port));
 
-}, 3000);
+}, 5000);

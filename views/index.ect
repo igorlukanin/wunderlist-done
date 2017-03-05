@@ -1,5 +1,5 @@
 <ul>
 <% for @entry in @completed: %>
-    <li><%= @entry.list %>: <%= @entry.task %></li>
+    <li><%= @entry.list %>: <%= @entry.task %> <%= @entry.subtask %></li>
 <% end %>
 </ul>
